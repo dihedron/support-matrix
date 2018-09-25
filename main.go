@@ -3,26 +3,29 @@ package main
 import (
 	"fmt"
 
+	"github.com/dihedron/go-bool/rules"
 	"github.com/tealeg/xlsx"
 )
 
-// appserver > jdk > guest > flavour
+// appserver > jdk > guest > hypervisor > distribution
 
 func main() {
-	flavours := []string{
-		"RHEL/KVM",
-		"Canonical/KVM",
-		"Canonical/ESXi",
-		"Canonical/LXC",
-		"SuSE/KVM",
-		"SuSE/ESXi",
-		"SuSE/Xen",
-		"Oracle/KVM (OracleVM)",
-		"Oracle/Hyper-V",
-		"VMware/ESXi",
-		"Huawei/KVM",
-		"Huawei/ESXi",
-		"Huawei/Xen",
+
+	distributions := []string{
+		"Red Hat",
+		"Canonical",
+		"SuSE",
+		"Oracle",
+		"Huawei",
+	}
+
+	hypervisors := []string{
+		"KVM",
+		"ESXi",
+		"LXC",
+		"Xen",
+		"Hyper-V",
+		"Oracle VM (KVM)",
 	}
 
 	guests := []string{
@@ -50,28 +53,41 @@ func main() {
 		"Oracle WebLogic",
 	}
 
-	/*
-		// contraints
-		appserver2jdk := map[string][]string{
-			"IBM WebSphere 9": []string{
-				"",
-			},
-		}
+	// supported configurations
+	flavours := rules.Or(
+		rules.And(
+			Distribution("Red Hat"),
+			Hypervisor("KVM"),
+		),
+		rules.And(
+			Distribution("Canonical"),
+			Hypervisor("KVM", "ESXi", "LXC"),
+		),
+		rules.And(
+			Distribution("SuSE"),
+			Hypervisor("KVM", "ESXi", "Xen"),
+		),
+		rules.And(
+			Distribution("Oracle"),
+			Hypervisor("Oracle VM (KVM)", "Hyper-V"),
+		),
+		rules.And(
+			Distribution("VMware"),
+			Hypervisor("ESXi"),
+		),
+		rules.And(
+			Distribution("Huawei"),
+			Hypervisor("KVM", "ESXi", "Xen"),
+		),
+	)
 
-		appserver2guest := map[string][]string{
-			"IBM WebSphere 9": []string{
-				"",
-			},
-		}
-
-		appserver2flavour := map[string][]string{
-			"IBM WebSphere 9": []string{
-				"",
-			},
-		}
-	*/
-
-	//jdk2guest = map[string][]string{}
+	supported := rules.And(
+		flavours,
+		rules.Or(
+			JDK("OpenJDK 1.8"),
+			JDK("IBM JDK 1.8"),
+		),
+	)
 
 	file := xlsx.NewFile()
 	sheet, err := file.AddSheet("Sheet1")
@@ -79,20 +95,35 @@ func main() {
 		fmt.Printf(err.Error())
 	}
 
-	for _, appserver := range appservers {
-		for _, jdk := range jdks {
+	for _, distribution := range distributions {
+		for _, hypervisor := range hypervisors {
 			for _, guest := range guests {
-				for _, flavour := range flavours {
-					row := sheet.AddRow()
-					cell := row.AddCell()
-					cell.Value = flavour
-					cell = row.AddCell()
-					cell.Value = guest
-					cell = row.AddCell()
-					cell.Value = jdk
-					cell = row.AddCell()
-					cell.Value = appserver
-					fmt.Sprintf("%s > %s > %s > %s\n", flavour, guest, jdk, appserver)
+				for _, jdk := range jdks {
+					for _, appserver := range appservers {
+						stack := Stack{
+							distribution,
+							hypervisor,
+							guest,
+							jdk,
+							appserver,
+						}
+						if result, err := supported.Evaluate(stack); err == nil && result {
+							fmt.Printf("ADDING %s > %s > %s > %s > %s\n", distribution, hypervisor, guest, jdk, appserver)
+							row := sheet.AddRow()
+							cell := row.AddCell()
+							cell.Value = distribution
+							cell = row.AddCell()
+							cell.Value = hypervisor
+							cell = row.AddCell()
+							cell.Value = guest
+							cell = row.AddCell()
+							cell.Value = jdk
+							cell = row.AddCell()
+							cell.Value = appserver
+						} else {
+							fmt.Printf("SKIPPING %s > %s > %s > %s > %s\n", distribution, hypervisor, guest, jdk, appserver)
+						}
+					}
 				}
 			}
 		}

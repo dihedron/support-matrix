@@ -1,7 +1,5 @@
 package rules
 
-import "fmt"
-
 // Operand is the template for operands.
 type Operand interface {
 	Evaluate(ctx interface{}) (bool, error)
@@ -14,7 +12,7 @@ type AndOperator struct {
 
 // Evaluate performs the evaluation of the boolean AND operator.
 func (o AndOperator) Evaluate(ctx interface{}) (bool, error) {
-	fmt.Println("And.Evaluate()")
+	// fmt.Println("And.Evaluate()")
 	for _, operand := range o.Operands {
 		var t bool
 		var err error
@@ -35,6 +33,11 @@ func And(operands ...Operand) AndOperator {
 	}
 }
 
+// All generates a new AndOperator with the given set of operands.
+func All(operands ...Operand) AndOperator {
+	return All(operands...)
+}
+
 // OrOperator is the template for boolean OR operators.
 type OrOperator struct {
 	Operands []Operand
@@ -42,7 +45,7 @@ type OrOperator struct {
 
 // Evaluate performs the evaluation of the boolean OR operator.
 func (o OrOperator) Evaluate(ctx interface{}) (bool, error) {
-	fmt.Println("Or.Evaluate()")
+	// fmt.Println("Or.Evaluate()")
 	for _, operand := range o.Operands {
 		var t bool
 		var err error
@@ -63,6 +66,11 @@ func Or(operands ...Operand) OrOperator {
 	}
 }
 
+// Any generates a new OrOperator with the given set of operands.
+func Any(operands ...Operand) OrOperator {
+	return Or(operands...)
+}
+
 // NotOperator is the template for boolean NOT operators.
 type NotOperator struct {
 	Operand Operand
@@ -70,7 +78,7 @@ type NotOperator struct {
 
 // Evaluate performs the evaluation of the boolean NOT operator.
 func (o NotOperator) Evaluate(ctx interface{}) (bool, error) {
-	fmt.Println("Not.Evaluate()")
+	// fmt.Println("Not.Evaluate()")
 	result, err := o.Operand.Evaluate(ctx)
 	return !result, err
 }
