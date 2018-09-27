@@ -15,10 +15,21 @@ import (
 func main() {
 
 	supported := logic.And(
-		model.OpenStackDistributionsSupportFilter,
-		//model.OracleJDK8SupportFilter,
-		//model.WebSphere9xSupportFilter,
-		model.JBossEAP7xSupportFilter,
+		// logic.Not(
+		// 	model.Hypervisor(model.ESXi),
+		// ),
+		//model.Distribution(model.RedHat),
+		model.OpenStackDistributionsSupportMatrix,
+		model.Hypervisor(model.KVM),
+		logic.Or(
+			model.JBossEAP7xSupportMatrix,
+			model.WebSphere8xBaseSupportMatrix,
+			// model.WebSphere8xNetDeploySupportMatrix,
+			model.WebSphere9xBaseSupportMatrix,
+			// model.WebSphere9xNetDeploySupportMatrix,
+			model.WebLogic11gSupportMatrix,
+			model.WebLogic12cSupportMatrix,
+		),
 	)
 
 	file := xlsx.NewFile()
@@ -42,7 +53,7 @@ func main() {
 								AppServer:    appserver,
 							}
 							if result, err := supported.Evaluate(stack); err == nil && result {
-								fmt.Printf("ADDING %s > %s > %s > %s > %s > %s\n", distribution, host, hypervisor, guest, jdk, appserver)
+								// fmt.Printf("ADDING %s > %s > %s > %s > %s > %s\n", distribution, host, hypervisor, guest, jdk, appserver)
 								row := sheet.AddRow()
 								cell := row.AddCell()
 								cell.Value = string(distribution)
@@ -66,7 +77,7 @@ func main() {
 		}
 	}
 
-	err = file.Save("MyXLSXFile.xlsx")
+	err = file.Save("SupportMatrix.xlsx")
 	if err != nil {
 		fmt.Printf(err.Error())
 	}

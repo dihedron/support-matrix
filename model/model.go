@@ -248,6 +248,34 @@ var AllGuestOSs = []GuestOSType{
 	CentOS7xVM,
 }
 
+var AllLinuxGuests = logic.Or(
+	GuestOS(
+		Ubuntu1204VM,
+		Ubuntu1404VM,
+		Ubuntu1604VM,
+		Ubuntu1804VM,
+	),
+	GuestOS(
+		RHEL5xVM,
+		RHEL6xVM,
+		RHEL7xVM),
+	GuestOS(
+		OracleLinux5xVM,
+		OracleLinux6xVM,
+		OracleLinux7xVM,
+	),
+	GuestOS(
+		SLES10VM,
+		SLES11VM,
+		SLES12VM,
+	),
+	GuestOS(
+		CentOS5xVM,
+		CentOS6xVM,
+		CentOS7xVM,
+	),
+)
+
 // JDKType is the type used to represent the Java Developer Kit.
 type JDKType string
 
@@ -344,20 +372,24 @@ func AppServer(values ...AppServerType) AppServerOperand {
 
 // Application Server
 const (
-	JBossEAP70  AppServerType = "JBoss EAP 7.0"
-	JBossEAP71                = "JBoss EAP 7.1"
-	WebSphere8x               = "IBM WebSphere 8"
-	WebSphere9x               = "IBM WebSphere 9"
-	WebLogic11g               = "Oracle WebLogic 11g"
-	WebLogic12c               = "Oracle WebLogic 12c"
+	JBossEAP70      AppServerType = "JBoss EAP 7.0"
+	JBossEAP71                    = "JBoss EAP 7.1"
+	WebSphere8xBase               = "IBM WebSphere 8 Base"
+	WebSphere8xND                 = "IBM WebSphere 8 Network Deployment"
+	WebSphere9xBase               = "IBM WebSphere 9 Base"
+	WebSphere9xND                 = "IBM WebSphere 9 Network Deployment"
+	WebLogic11g                   = "Oracle WebLogic 11g"
+	WebLogic12c                   = "Oracle WebLogic 12c"
 )
 
 // AllAppServers represents the domain of all application servers.
 var AllAppServers = []AppServerType{
 	JBossEAP71,
 	JBossEAP70,
-	WebSphere8x,
-	WebSphere9x,
+	WebSphere8xBase,
+	WebSphere8xND,
+	WebSphere9xBase,
+	WebSphere9xND,
 	WebLogic11g,
 	WebLogic12c,
 }
