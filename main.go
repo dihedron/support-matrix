@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/dihedron/go-bool/rules"
+	"github.com/dihedron/go-bool/logic"
+	"github.com/dihedron/go-bool/model"
 	"github.com/tealeg/xlsx"
 )
 
@@ -13,11 +14,11 @@ import (
 
 func main() {
 
-	supported := rules.And(
-		supportedDistributions,
-		//supportedByOracleJDK18,
-		//supportedByWebSphere9x,
-		supportedByJBossEAP7x,
+	supported := logic.And(
+		model.OpenStackDistributionsSupportFilter,
+		//model.OracleJDK8SupportFilter,
+		//model.WebSphere9xSupportFilter,
+		model.JBossEAP7xSupportFilter,
 	)
 
 	file := xlsx.NewFile()
@@ -26,19 +27,19 @@ func main() {
 		fmt.Printf(err.Error())
 	}
 
-	for _, distribution := range AllDistributions {
-		for _, host := range AllHostOSs {
-			for _, hypervisor := range AllHypervisors {
-				for _, guest := range AllGuestOSs {
-					for _, jdk := range AllJDKs {
-						for _, appserver := range AllAppServers {
-							stack := Stack{
-								distribution,
-								host,
-								hypervisor,
-								guest,
-								jdk,
-								appserver,
+	for _, distribution := range model.AllDistributions {
+		for _, host := range model.AllHostOSs {
+			for _, hypervisor := range model.AllHypervisors {
+				for _, guest := range model.AllGuestOSs {
+					for _, jdk := range model.AllJDKs {
+						for _, appserver := range model.AllAppServers {
+							stack := model.Stack{
+								Distribution: distribution,
+								HostOS:       host,
+								Hypervisor:   hypervisor,
+								GuestOS:      guest,
+								JDK:          jdk,
+								AppServer:    appserver,
 							}
 							if result, err := supported.Evaluate(stack); err == nil && result {
 								fmt.Printf("ADDING %s > %s > %s > %s > %s > %s\n", distribution, host, hypervisor, guest, jdk, appserver)

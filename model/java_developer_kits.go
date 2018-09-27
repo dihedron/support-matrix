@@ -1,6 +1,6 @@
-package main
+package model
 
-import "github.com/dihedron/go-bool/rules"
+import "github.com/dihedron/go-bool/logic"
 
 // Oracle JDK 1.8 is certified on certain Guest OSs, provided they all run on
 // a very limited set of hypervisors; see https://www.oracle.com/technetwork/java/javase/certconfig-2095354.html
@@ -11,19 +11,19 @@ import "github.com/dihedron/go-bool/rules"
 // - Solaris LDOMs
 // - Microsoft Hyper-V runninng on Windows Server 2012
 
-var supportedByOracleJDK18 = rules.And(
+var OracleJDK8SupportFilter = logic.And(
 	JDK(OracleJDK8),
-	rules.Or(
-		rules.And(
+	logic.Or(
+		logic.And(
 			HostOS(OracleLinux5x, OracleLinux6x, OracleLinux7x),
 			Hypervisor(KVM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(Win2k12, Win2k12R2),
 			Hypervisor(HyperV),
 		),
 	),
-	rules.Or(
+	logic.Or(
 		GuestOS(Win2k8R2VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		GuestOS(OracleLinux5xVM, OracleLinux6xVM, OracleLinux7xVM),
 		GuestOS(RHEL5xVM, RHEL6xVM, RHEL7xVM),
@@ -32,6 +32,7 @@ var supportedByOracleJDK18 = rules.And(
 	),
 )
 
-var supportedByOpenJDK = rules.And(
+var OpenJDK8SupportFilter = logic.And(
+	JDK(OpenJDK8),
 	GuestOS(RHEL5xVM, RHEL6xVM, RHEL7xVM),
 )

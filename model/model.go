@@ -1,6 +1,6 @@
-package main
+package model
 
-import "github.com/dihedron/go-bool/rules"
+import "github.com/dihedron/go-bool/logic"
 
 // DistributionType is the type used to represent Distributions.
 type DistributionType string
@@ -168,7 +168,7 @@ var AllHypervisors = []HypervisorType{
 }
 
 // AllHyperV is the set of all Hyper-V hypervisor technologies.
-var AllHyperV = rules.And(
+var AllHyperV = logic.And(
 	Hypervisor(HyperV),
 	HostOS(BareMetal, Win2k8, Win2k8R2, Win2k12, Win2k12R2, Win2k16),
 )
@@ -362,8 +362,8 @@ var AllAppServers = []AppServerType{
 	WebLogic12c,
 }
 
-// Stack represents a combination of Distribution, Hypervisor, GuestOS, JDK
-// and AppServer to be evaluated against a rule.
+// Stack represents a combination of Distribution, HostOS, Hypervisor, GuestOS,
+// JDK and AppServer to be evaluated against a filter.
 type Stack struct {
 	Distribution DistributionType
 	HostOS       HostOSType

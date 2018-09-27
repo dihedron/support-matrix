@@ -1,46 +1,46 @@
-package main
+package model
 
-import "github.com/dihedron/go-bool/rules"
+import "github.com/dihedron/go-bool/logic"
 
-var supportedByJBossEAP7x = rules.And(
+var JBossEAP7xSupportFilter = logic.And(
 	AppServer(JBossEAP70, JBossEAP71),
-	rules.Or(
-		rules.And(
+	logic.Or(
+		logic.And(
 			GuestOS(RHEL7xVM),
 			JDK(OpenJDK8),
 		),
-		rules.And(
+		logic.And(
 			GuestOS(RHEL6xVM),
 			JDK(OpenJDK8),
 		),
-		rules.And(
+		logic.And(
 			GuestOS(RHEL5xVM),
 			JDK(OpenJDK8),
 		),
-		supportedByOracleJDK18,
+		OracleJDK8SupportFilter,
 		//TODO: supportedByIBMJDK8,
 	),
 )
 
-var supportedByWebSphere8x = rules.And(
+var WebSphere8xSupportFilter = logic.And(
 	AppServer(WebSphere8x),
-	rules.Or(
-		rules.And(
+	logic.Or(
+		logic.And(
 			HostOS(Win2k8, Win2k12, Win2k12R2, Win2k16),
 			Hypervisor(HyperV),
 			GuestOS(RHEL6xVM, SLES11VM, SLES12VM, Ubuntu1404VM, Win2k8VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(RHEL6x, RHEL7x),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k8VM, Win2k8R2VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(SLES11),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k8VM, Win2k8R2VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(BareMetal),
 			Hypervisor(ESXi),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k8VM, Win2k8R2VM),
@@ -48,45 +48,45 @@ var supportedByWebSphere8x = rules.And(
 	),
 )
 
-var supportedByWebSphere9x = rules.And(
+var WebSphere9xSupportFilter = logic.And(
 	AppServer(WebSphere9x),
-	rules.Or(
-		rules.And(
+	logic.Or(
+		logic.And(
 			HostOS(SLES11),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Ubuntu1804VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(SLES12),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(Ubuntu1604LTS),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(Win2k12, Win2k12R2, Win2k16),
 			Hypervisor(HyperV),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(OracleLinux5x, OracleLinux6x, OracleLinux7x),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(RHEL6x),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Ubuntu1804VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(RHEL7x),
 			Hypervisor(KVM),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
 		),
-		rules.And(
+		logic.And(
 			HostOS(BareMetal),
 			Hypervisor(ESXi),
 			GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Win2k12VM, Win2k12R2VM, Win2k16VM),
@@ -94,8 +94,8 @@ var supportedByWebSphere9x = rules.And(
 	),
 )
 
-var supportedByWebLogic11g = rules.Or(
-	rules.And(
+var WebLogic11gSupportFilter = logic.Or(
+	logic.And(
 		HostOS(SLES11),
 		Hypervisor(KVM),
 		GuestOS(RHEL6xVM, SLES11VM, Ubuntu1404VM, SLES12VM, RHEL7xVM, Ubuntu1604VM, Ubuntu1804VM, Win2k12VM, Win2k12R2VM, Win2k16VM),

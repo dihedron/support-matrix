@@ -1,67 +1,69 @@
-package main
+package model
 
-import "github.com/dihedron/go-bool/rules"
+import "github.com/dihedron/go-bool/logic"
 
-// OpenStack distributions and the hypervisor technologies they support, according
-// to the support matrix at https://www.openstack.org/marketplace/distros/
-var supportedDistributions = rules.Or(
-	rules.And(
+// OpenStackDistributionsSupportFilter is the set of filters that select the combinations
+// of stack elements supporting a set of feature-complete, recent and widely adopted
+// OpenStack distributions; for the support matrix see
+// https://www.openstack.org/marketplace/distros/
+var OpenStackDistributionsSupportFilter = logic.Or(
+	logic.And(
 		Distribution(RedHat),
 		HostOS(RHEL6x, RHEL7x),
 		Hypervisor(KVM),
 	),
-	rules.And(
+	logic.And(
 		Distribution(Canonical),
-		rules.Or(
-			rules.And(
+		logic.Or(
+			logic.And(
 				HostOS(Ubuntu1604LTS, Ubuntu1804LTS),
 				Hypervisor(KVM, LXC),
 			),
-			rules.And(
+			logic.And(
 				HostOS(BareMetal),
 				Hypervisor(ESXi),
 			),
 		),
 	),
-	rules.And(
+	logic.And(
 		Distribution(SuSE),
-		rules.Or(
-			rules.And(
+		logic.Or(
+			logic.And(
 				HostOS(SLES11, SLES12),
 				Hypervisor(KVM, Xen),
 			),
-			rules.And(
+			logic.And(
 				HostOS(BareMetal),
 				Hypervisor(ESXi),
 			),
 		),
 	),
-	rules.And(
+	logic.And(
 		Distribution(Oracle),
-		rules.Or(
-			rules.And(
+		logic.Or(
+			logic.And(
 				HostOS(OracleLinux6x, OracleLinux7x),
 				Hypervisor(KVM),
 			),
-			rules.And(
+			logic.And(
 				HostOS(BareMetal, Win2k12R2, Win2k16),
 				Hypervisor(HyperV),
 			),
 		),
 	),
-	rules.And(
+	logic.And(
 		Distribution(VMware),
 		HostOS(BareMetal),
 		Hypervisor(ESXi),
 	),
-	rules.And(
+	logic.And(
 		Distribution(Huawei),
-		rules.Or(
-			rules.And(
+		logic.Or(
+			logic.And(
 				Hypervisor(KVM, Xen),
 				HostOS(SLES11, SLES12, Ubuntu1204LTS, CentOS6x),
 			),
-			rules.And(
+			logic.And(
 				HostOS(BareMetal),
 				Hypervisor(ESXi),
 			),

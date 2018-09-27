@@ -1,4 +1,4 @@
-package rules
+package logic
 
 // Operand is the template for operands.
 type Operand interface {
